@@ -1,8 +1,6 @@
 import cv2
 import os, time
 import numpy as np
-from pyk4a import PyK4A
-from pyk4a.calibration import CalibrationType
 import matplotlib.pyplot as plt
 
 
@@ -109,37 +107,3 @@ def estimate_transformation(corners, ids, camera_matrix, dist_coeffs):
         return transform_mat
 
     return None
-
-def main():
-    # Initialize the camera
-    cam_id = 1
-    k4a = PyK4A(device_id=cam_id)
-    k4a.start()
-
-    camera_matrix = k4a.calibration.get_camera_matrix(CalibrationType.DEPTH)
-    dist_coeffs = k4a.calibration.get_distortion_coefficients(CalibrationType.DEPTH)
-    print(f"Camera matrix: {camera_matrix}")
-    print(f"Distortion coefficients: {dist_coeffs}")
-
-    # Capture IR frame from Kinect
-    ir_frame = get_kinect_ir_frame(k4a)
-
-    if ir_frame is not None:
-        # Detect ArUco markers and get visualization
-        corners, ids = detect_aruco_markers(ir_frame, debug=True)
-
-        # Estimate transformation
-        if ids is not None and len(ids) > 0:
-            transform_matrix = estimate_transformation(corners, ids, camera_matrix, dist_coeffs)
-            if transform_matrix is not None:
-                print("Transformation Matrix A:")
-                print(transform_matrix)
-            else:
-                print("Could not estimate transformation.")
-        else:
-            print("No ArUco marker detected.")
-    else:
-        print("Failed to capture IR frame.")
-
-if __name__ == "__main__":
-    main()
