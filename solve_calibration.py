@@ -20,12 +20,6 @@ def estimate_tag_pose(finger_pose):
     # finger_to_hand obtained from the product manual: 
     # [https://download.franka.de/documents/220010_Product%20Manual_Franka%20Hand_1.2_EN.pdf]
     finger_to_hand = np.array([
-        [0.707,  0.707, 0, 0],
-        [-0.707, 0.707, 0, 0],
-        [0, 0, 1, 0.1034],
-        [0, 0, 0, 1],
-    ])
-    finger_to_hand = np.array([
         [1, 0, 0, 0],
         [0, 1, 0, 0],
         [0, 0, 1, 0.1034],
@@ -122,12 +116,6 @@ def solve_extrinsic(gripper_poses, target_poses_in_camera, eye_to_hand=True):
         tag_poses, target_poses_in_camera, T)
     print(f"Average reprojection error: {avg_error}")
 
-    # # Calculate tag pose in base
-    # target_poses = [T @ p for p in gripper_poses]
-
-    # # Solve the rigid transformation
-    # T = solve_rigid_transformation(
-    #     target_poses_in_camera, target_poses)
 
     return T
 

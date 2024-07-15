@@ -55,31 +55,10 @@ def get_kinect_rgb_frame(device, visualize=False):
     else:
         print("Failed to capture IR frame after 20 attempts.")
         return None
-# --
+
     
 
-def detect_aruco_markers(ir_frame, debug=False):
-    """
-    Detect ArUco markers in an IR frame and visualize the detection.
-    """
-    gray = cv2.convertScaleAbs(ir_frame, alpha=(255.0/ir_frame.max()))
-    # gray = cv2.convertScaleAbs(ir_frame)
-    
-    # Load the predefined dictionary
-    dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_ARUCO_ORIGINAL)
-    parameters =  cv2.aruco.DetectorParameters()
-    detector = cv2.aruco.ArucoDetector(dictionary, parameters)
-    
-    # Detect markers
-    corners, ids, rejected = detector.detectMarkers(gray)   # top-left, top-right, bottom-right, and bottom-left corners
 
-    # Visualize markers
-    vis_image = cv2.aruco.drawDetectedMarkers(gray.copy(), corners, ids)
-    # cv2.destroyAllWindows()
-    cv2.imshow('ArUco Marker Detection', vis_image)
-    cv2.waitKey(0 if debug else 1)
-
-    return corners, ids
 
 def estimate_transformation(corners, ids, camera_matrix, dist_coeffs):
     """
