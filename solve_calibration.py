@@ -44,7 +44,7 @@ def calculate_reprojection_error(tag_poses, target_poses, T_matrix):
         # Compare with tag pos
         tag_pos = tag_pose[:3, 3]
         error = np.linalg.norm(tag_pos - transformed_pos)
-        print(idx, " error: ", error)
+        # print(idx, " error: ", error)
         idx += 1
         errors.append(error)
 
@@ -70,24 +70,34 @@ def solve_extrinsic(tag_poses, target_poses_in_camera):
 
     return T
 
+def get_matrix( transf ):
+    T = np.eye(4)
+    T[0][3] = transf[0]
+    T[1][3] = transf[1]
+    T[2][3] = transf[2]
+    rot = Rotation.from_quat(transf[3:7])
+    # print(rot.as_matrix())
+    T[0:3,0:3] = rot.as_matrix()[0]
+    return T
+
 
 if __name__ == "__main__":
-    filepath = os.path.abspath(__file__)
-    dirpath = os.path.dirname(filepath)
 
-    # Load data
-    cam_id = 1
-    data_dirname = os.path.join(dirpath, "collected_data")
-    data_filepath = os.path.join(data_dirname, f"cam{cam_id}_data.pkl")
-    with open(data_filepath, "rb") as f:
-        data = pickle.load(f)
-    tag_poses, target_poses_in_camera = zip(*data) 
-    
-    # Solve the extrinsic calibration
-    T = solve_extrinsic(tag_poses, target_poses_in_camera)
 
-    # Save the calibration
-    calib_dirname = os.path.join(dirpath, "calibration_results")
-    os.makedirs(calib_dirname, exist_ok=True)
-    filepath = os.path.join(calib_dirname, f"cam{cam_id}_calibration.npz")
-    np.savez(filepath, T=T)
+    data = np.load("./success.npy", allow_pickle = True)
+    print("len: ", len(data))
+    base_tags = []
+    cam_tags = []
+    for point in data:
+        base_tag = point["base_tag"]
+        base_tag_transform = get_matrix(base_tag)
+        base_tags.append(base_tag_transform)
+        print("base: ", base_tag_transform)
+        cam_tag = point["camera_tag"]
+        cam_tag_transform = get_matrix(cam_tag)
+        cam_tags.append(cam_tag_transform)
+        print("cam_tag_transform: ", cam_tag_transform)
+
+        print("")
+
+    solve_extrinsic(base_tags, cam_tags)
