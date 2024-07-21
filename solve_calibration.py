@@ -49,7 +49,7 @@ def calculate_reprojection_error(tag_poses, target_poses, T_matrix):
         # Compare with tag pos
         tag_pos = tag_pose[:3, 3]
         error = np.linalg.norm(tag_pos - transformed_pos)
-        print(idx, " error: ", error)
+        #print(idx, " error: ", error)
         idx += 1
         errors.append(error)
 
@@ -69,7 +69,7 @@ def solve_extrinsic(tag_poses, target_poses_in_camera):
     print(f"Transformation matrix T:\n{T}")
 
     rot = Rotation.from_matrix( T[0:3, 0:3])
-    quat = rot.as_quat(rot)
+    quat = rot.as_quat()
     trans = T[0:3, 3]
     print("quat: ", quat)
     print("trans: ", trans)
@@ -94,7 +94,7 @@ def get_matrix( transf ):
 if __name__ == "__main__":
 
 
-    data = np.load("./success.npy", allow_pickle = True)
+    data = np.load("./right2.npy", allow_pickle = True)
     print("len: ", len(data))
     base_tags = []
     cam_tags = []
@@ -111,8 +111,8 @@ if __name__ == "__main__":
         # print("cam_tag_transform: ", cam_tag_transform)
         # print("")
 
-    start = 50
-    end = 200
-    base_tags = base_tags[start : end]
-    cam_tags = cam_tags[start : end]
+    # start = 50
+    # end = 250
+    # base_tags = base_tags[start : end]
+    # cam_tags = cam_tags[start : end]
     solve_extrinsic(base_tags, cam_tags)
