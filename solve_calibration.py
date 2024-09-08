@@ -94,7 +94,7 @@ def get_matrix( transf ):
 if __name__ == "__main__":
 
 
-    data = np.load("./right2.npy", allow_pickle = True)
+    data = np.load("./calibration_data/left3.npy", allow_pickle = True)
     print("len: ", len(data))
     base_tags = []
     cam_tags = []
